@@ -1,0 +1,117 @@
+clear all; close all;  
+ 
+cd C:\Users\basbl\Desktop\octavestuff\DATABASE
+load DATA.mat
+
+T = []; 
+K = 10;  %De hoeveelheid outputs 
+M = 250; %De hoeveelheid neurons in de hidden layer 
+  for i = 1:10 
+ 
+ Ttmp = zeros(500, K);   %maak een matrix van de hoeveelheid plaatjes met i bij K 
+
+ Ttmp(:,i) = 1; %stel in die matrix de ide rij op 1 
+
+ T = [T; Ttmp];  %voeg de labels bij T 
+
+endfor 
+
+clear Ttmp; 
+clear i; 
+ 
+[N, D] = size(X); 
+alpha = 10; %learningrate
+theta1 = 2 * randn(M, D) .- 1; 
+theta2 = 2 * randn(K, M) .- 1; 
+bias = 2 * randn(M,1) .- 1; 
+
+tau1 = 0; %totaal som gradienten theta1
+tau2 = 0; %totaal som gradienten theta2
+phi = 0; % totaal som gradienten bias
+
+Totaalcost = 0; %totaal som cost training
+
+  
+
+for i = 1: (N-1)   
+
+   a{1} = (X(i,:))';   
+   Z{2} = theta1 * a{1}; 
+   a{2} = Sigmoid(Z{2} + bias); 
+   Z{3} = theta2 * a{2}; 
+   a{3} = Sigmoid(Z{3}); 
+   h = a{3} 
+
+   Cost = (h .- (T(1,:))') .^2; 
+   Cost = sum(Cost); 
+ Totaalcost = Totaalcost + Cost; 
+   
+   delta1 = (a{1} * ((aSigmoid(Z{3}) .* Cost)' * theta2 .* (aSigmoid(Z{2}))'))'; 
+   delta2 = Cost .* aSigmoid(Z{3}) * a{2}'; 
+   kappa = (Cost .* aSigmoid(Z{3}))' * theta2; 
+
+   tau1 = tau1 + delta1; 
+   tau2 = tau2 + delta2;  
+   phi = phi + kappa; 
+
+endfor 
+
+  
+
+Totaalcost
+
+  
+tau1 = tau1 / (N-1); %gem. gradient Theta1 over alle trainings data
+tau2 = tau2 / (N-1); %gem. gradient Theta2 over alle trainings data
+phi = phi / (N-1); %gem. gradient bias over alle trainings data
+
+theta1 = theta1 .- alpha * tau1; %optimalisatie
+theta2 = theta2 .- alpha * tau2; %optimalisatie
+bias = bias .- alpha * phi'; %optimalisatie
+
+clear i; 
+Totaalcost = 0; 
+
+for j = 1: (N-1) 
+   
+   a{1} = (X(j,:))';   
+   Z{2} = theta1 * a{1}; 
+   a{2} = Sigmoid(Z{2} + bias); 
+   Z{3} = theta2 * a{2}; 
+   a{3} = Sigmoid(Z{3}); 
+
+    
+
+   h = a{3}; 
+
+   Cost = (h .- (T(j,:))') .^2; 
+
+   Cost = sum(Cost); 
+
+   Totaalcost = Totaalcost + Cost; 
+
+    
+
+endfor 
+
+  
+
+Totaalcost 
+
+  
+
+a{1} = (X(5000,:))'; 
+
+    
+
+Z{2} = theta1 * a{1}; 
+
+a{2} = Sigmoid(Z{2} + bias); 
+
+Z{3} = theta2 * a{2}; 
+
+a{3} = Sigmoid(Z{3}); 
+
+   
+
+h = Softmax(a{3}); 
